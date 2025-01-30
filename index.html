@@ -76,7 +76,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="login-box">
+        <div class="login-box" id="loginBox">
             <h1>Login</h1>
             <form id="loginForm">
                 <input type="text" id="username" placeholder="Usuário" required>
@@ -86,54 +86,84 @@
         </div>
 
         <div class="link-box" style="display: none;" id="videoSection">
-            <h2>Bem-vindo!</h2>
-            <p>Acesse o vídeo do curso no link abaixo:</p>
-            <a href="https://example.com/video" target="_blank">Acessar Vídeo</a>
+            <h2 id="videoMessage"></h2>
+            <p id="videoInstruction"></p>
+            <a href="https://example.com/video" target="_blank" id="videoLink" style="display: none;">Acessar Vídeo</a>
         </div>
     </div>
 
     <script>
-        // Sistema de Login Simples
         const loginForm = document.getElementById('loginForm');
+        const loginBox = document.getElementById('loginBox');
         const videoSection = document.getElementById('videoSection');
+        const videoMessage = document.getElementById('videoMessage');
+        const videoInstruction = document.getElementById('videoInstruction');
+        const videoLink = document.getElementById('videoLink');
 
-        // Simula a validação e cria a restrição de 24 horas
+        const USERNAME = "admin";
+        const PASSWORD = "1234";
+
+        function getMidnightTime() {
+            const now = new Date();
+            const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+            return midnight.getTime();
+        }
+
+        function showNextVideoMessage() {
+            const now = Date.now();
+            const nextMidnight = getMidnightTime();
+
+            if (now >= nextMidnight) {
+                videoMessage.textContent = "Novo vídeo disponível!";
+                videoInstruction.textContent = "Clique no link abaixo para assistir:";
+                videoLink.style.display = 'block';
+            } else {
+                videoMessage.textContent = "Próximo vídeo disponível depois de 24 horas.";
+                videoInstruction.textContent = `Aguarde até 00:00 para acessar o próximo vídeo.`;
+                videoLink.style.display = 'none';
+            }
+        }
+
         loginForm.addEventListener('submit', function (e) {
             e.preventDefault();
 
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
 
-            // Exemplo simples de autenticação
-            if (username === "admin" && password === "1234") {
-                alert('Login bem-sucedido! Você tem acesso por 24 horas.');
+            if (username === USERNAME && password === PASSWORD) {
+                alert('Login bem-sucedido!');
 
-                // Salva o horário de login no localStorage
+                // Salva o login no localStorage
+                localStorage.setItem('loggedIn', 'true');
                 localStorage.setItem('loginTime', Date.now());
 
-                // Mostra a seção de vídeo
-                document.querySelector('.login-box').style.display = 'none';
+                loginBox.style.display = 'none';
                 videoSection.style.display = 'block';
+                showNextVideoMessage();
             } else {
                 alert('Usuário ou senha incorretos!');
             }
         });
 
-        // Verifica se o acesso ainda está dentro das 24 horas
         window.onload = function () {
+            const isLoggedIn = localStorage.getItem('loggedIn');
             const loginTime = localStorage.getItem('loginTime');
-            if (loginTime) {
+
+            if (isLoggedIn && loginTime) {
                 const elapsedTime = Date.now() - loginTime;
+
                 if (elapsedTime <= 24 * 60 * 60 * 1000) {
-                    // Mostra a seção de vídeo
-                    document.querySelector('.login-box').style.display = 'none';
+                    loginBox.style.display = 'none';
                     videoSection.style.display = 'block';
+                    showNextVideoMessage();
                 } else {
-                    // Remove o horário de login expirado
+                    localStorage.removeItem('loggedIn');
                     localStorage.removeItem('loginTime');
                 }
             }
         };
+
+        setInterval(showNextVideoMessage, 1000); // Atualiza mensagem a cada segundo
     </script>
 </body>
 </html>
