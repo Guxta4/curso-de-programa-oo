@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curso de Programação</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: url('download.png') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7); /* Overlay */
+        }
+
+        .login-box {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 300px;
+        }
+
+        .login-box h1 {
+            margin-bottom: 20px;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .login-box button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: red;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .login-box button:hover {
+            background: darkred;
+        }
+
+        .link-box {
+            margin-top: 20px;
+        }
+
+        .link-box a {
+            color: red;
+            text-decoration: none;
+            font-size: 16px;
+        }
+
+        .link-box a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <h1>Login</h1>
+            <form id="loginForm">
+                <input type="text" id="username" placeholder="Usuário" required>
+                <input type="password" id="password" placeholder="Senha" required>
+                <button type="submit">Entrar</button>
+            </form>
+        </div>
+
+        <div class="link-box" style="display: none;" id="videoSection">
+            <h2>Bem-vindo!</h2>
+            <p>Acesse o vídeo do curso no link abaixo:</p>
+            <a href="https://example.com/video" target="_blank">Acessar Vídeo</a>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de Login Simples
+        const loginForm = document.getElementById('loginForm');
+        const videoSection = document.getElementById('videoSection');
+
+        // Simula a validação e cria a restrição de 24 horas
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Exemplo simples de autenticação
+            if (username === "admin" && password === "1234") {
+                alert('Login bem-sucedido! Você tem acesso por 24 horas.');
+
+                // Salva o horário de login no localStorage
+                localStorage.setItem('loginTime', Date.now());
+
+                // Mostra a seção de vídeo
+                document.querySelector('.login-box').style.display = 'none';
+                videoSection.style.display = 'block';
+            } else {
+                alert('Usuário ou senha incorretos!');
+            }
+        });
+
+        // Verifica se o acesso ainda está dentro das 24 horas
+        window.onload = function () {
+            const loginTime = localStorage.getItem('loginTime');
+            if (loginTime) {
+                const elapsedTime = Date.now() - loginTime;
+                if (elapsedTime <= 24 * 60 * 60 * 1000) {
+                    // Mostra a seção de vídeo
+                    document.querySelector('.login-box').style.display = 'none';
+                    videoSection.style.display = 'block';
+                } else {
+                    // Remove o horário de login expirado
+                    localStorage.removeItem('loginTime');
+                }
+            }
+        };
+    </script>
+</body>
+</html>
